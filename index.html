@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz : Verbes Irréguliers</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    label, input, select {
+      display: block;
+      margin: 10px 0;
+    }
+    input[type="text"], select {
+      padding: 8px;
+      width: 300px;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+    }
+    .correction {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f1f1f1;
+      border-left: 4px solid green;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Quiz : Verbes irréguliers</h1>
+
+  <label for="category">Choisir une catégorie :</label>
+  <select id="category" onchange="newQuestion()">
+    <option value="all">Tous les verbes</option>
+    <option value="3identiques">Trois formes identiques</option>
+    <option value="2identiques">Deux formes identiques</option>
+    <option value="different">Trois formes différentes</option>
+  </select>
+
+  <p>Devine les formes du verbe : <strong id="baseVerb"></strong></p>
+
+  <label>Prétérit : <input type="text" id="preteritInput"></label>
+  <label>Participe passé : <input type="text" id="pastParticipleInput"></label>
+  <label>Traduction : <input type="text" id="translationInput"></label>
+
+  <button onclick="checkAnswers()">Vérifier</button>
+  <button onclick="newQuestion()">Nouveau verbe</button>
+
+  <div class="correction" id="correction" style="display: none;"></div>
+
+  <script>
+    const verbs = [
+      // Format: { base: "", past: "", pastParticiple: "", translation: "", type: "3identiques" | "2identiques" | "different" }
+      { base: "cut", past: "cut", pastParticiple: "cut", translation: "couper", type: "3identiques" },
+      { base: "put", past: "put", pastParticiple: "put", translation: "mettre", type: "3identiques" },
+      { base: "let", past: "let", pastParticiple: "let", translation: "laisser", type: "3identiques" },
+      { base: "read", past: "read", pastParticiple: "read", translation: "lire", type: "3identiques" },
+      { base: "cost", past: "cost", pastParticiple: "cost", translation: "coûter", type: "3identiques" },
+      { base: "hit", past: "hit", pastParticiple: "hit", translation: "frapper", type: "3identiques" },
+      { base: "shut", past: "shut", pastParticiple: "shut", translation: "fermer", type: "3identiques" },
+
+      { base: "say", past: "said", pastParticiple: "said", translation: "dire", type: "2identiques" },
+      { base: "make", past: "made", pastParticiple: "made", translation: "faire", type: "2identiques" },
+      { base: "hear", past: "heard", pastParticiple: "heard", translation: "entendre", type: "2identiques" },
+      { base: "keep", past: "kept", pastParticiple: "kept", translation: "garder", type: "2identiques" },
+      { base: "feel", past: "felt", pastParticiple: "felt", translation: "ressentir", type: "2identiques" },
+
+      { base: "go", past: "went", pastParticiple: "gone", translation: "aller", type: "different" },
+      { base: "see", past: "saw", pastParticiple: "seen", translation: "voir", type: "different" },
+      { base: "write", past: "wrote", pastParticiple: "written", translation: "écrire", type: "different" },
+      { base: "take", past: "took", pastParticiple: "taken", translation: "prendre", type: "different" },
+      { base: "speak", past: "spoke", pastParticiple: "spoken", translation: "parler", type: "different" },
+
+      // Ajoute ici les 147 verbes complets si tu veux plus tard
+    ];
+
+    let currentVerb;
+
+    function newQuestion() {
+      document.getElementById("correction").style.display = "none";
+      document.getElementById("preteritInput").value = "";
+      document.getElementById("pastParticipleInput").value = "";
+      document.getElementById("translationInput").value = "";
+
+      const category = document.getElementById("category").value;
+      const filteredVerbs = category === "all" ? verbs : verbs.filter(v => v.type === category);
+
+      currentVerb = filteredVerbs[Math.floor(Math.random() * filteredVerbs.length)];
+      document.getElementById("baseVerb").textContent = currentVerb.base;
+    }
+
+    function checkAnswers() {
+      const preterit = document.getElementById("preteritInput").value.trim().toLowerCase();
+      const pastParticiple = document.getElementById("pastParticipleInput").value.trim().toLowerCase();
+      const translation = document.getElementById("translationInput").value.trim().toLowerCase();
+
+      const result = `
+        ✅ <strong>Base verbale :</strong> ${currentVerb.base}<br>
+        🔄 <strong>Ta réponse prétérit :</strong> ${preterit} | <strong>Correct :</strong> ${currentVerb.past}<br>
+        🔄 <strong>Ta réponse participe passé :</strong> ${pastParticiple} | <strong>Correct :</strong> ${currentVerb.pastParticiple}<br>
+        🔄 <strong>Ta traduction :</strong> ${translation} | <strong>Correct :</strong> ${currentVerb.translation}
+      `;
+
+      document.getElementById("correction").innerHTML = result;
+      document.getElementById("correction").style.display = "block";
+    }
+
+    newQuestion();
+  </script>
+
+</body>
+</html>
