@@ -18,7 +18,7 @@
       margin: 0;
     }
     .container {
-      background-color: rgba(255, 255, 255, 0.9);
+      background-color: rgba(255, 255, 255, 0.95);
       padding: 20px;
       border-radius: 15px;
       box-shadow: 0 0 10px rgba(0,0,0,0.3);
@@ -56,6 +56,19 @@
       font-weight: bold;
       margin-bottom: 10px;
     }
+    #leaderboard {
+      display: none;
+      margin-top: 20px;
+    }
+    #leaderboard table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    #leaderboard th, #leaderboard td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -91,8 +104,24 @@
     <button onclick="checkAnswers()">Vérifier</button>
     <button onclick="newQuestion()">Nouveau verbe</button>
     <button onclick="resetQuiz()">Réinitialiser</button>
+    <button onclick="toggleLeaderboard()">Classement mondial</button>
 
     <div class="correction" id="correction" style="display: none;"></div>
+
+    <div id="leaderboard">
+      <h2>Classement mondial</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Pseudo</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard-body">
+          <!-- Scores seront affichés ici -->
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <audio id="correctSound" src="https://www.soundjay.com/buttons/sounds/button-4.mp3"></audio>
@@ -105,7 +134,6 @@
       { base: "build", past: "built", pastParticiple: "built", translation: "construire", type: "2identiques" },
       { base: "bring", past: "brought", pastParticiple: "brought", translation: "apporter", type: "2identiques" },
       { base: "cut", past: "cut", pastParticiple: "cut", translation: "couper", type: "3identiques" },
-      // Ajoute les autres verbes jusqu'à 147 ici
     ];
 
     let score = 0;
@@ -133,6 +161,7 @@
       const preterit = document.getElementById("preteritInput").value.trim().toLowerCase();
       const pastParticiple = document.getElementById("pastParticipleInput").value.trim().toLowerCase();
       const translation = document.getElementById("translationInput").value.trim().toLowerCase();
+      const pseudo = document.getElementById("pseudo").value.trim();
 
       const correct = (
         preterit === currentVerb.past.toLowerCase() &&
@@ -156,6 +185,36 @@
         Traduction : ${currentVerb.translation}
       `;
       document.getElementById("correction").style.display = "block";
+
+      if (pseudo && score > 0) {
+        const scores = JSON.parse(localStorage.getItem("scores") || "[]");
+        const existing = scores.find(s => s.pseudo === pseudo);
+        if (!existing || score > existing.score) {
+          scores.push({ pseudo, score });
+          localStorage.setItem("scores", JSON.stringify(scores));
+        }
+      }
+    }
+
+    function toggleLeaderboard() {
+      const lb = document.getElementById("leaderboard");
+      if (lb.style.display === "none") {
+        showLeaderboard();
+        lb.style.display = "block";
+      } else {
+        lb.style.display = "none";
+      }
+    }
+
+    function showLeaderboard() {
+      const scores = JSON.parse(localStorage.getItem("scores") || "[]");
+      const sorted = scores.sort((a, b) => b.score - a.score).slice(0, 10);
+      const tbody = document.getElementById("leaderboard-body");
+      tbody.innerHTML = "";
+      for (const entry of sorted) {
+        const row = `<tr><td>${entry.pseudo}</td><td>${entry.score}</td></tr>`;
+        tbody.innerHTML += row;
+      }
     }
 
     function resetQuiz() {
