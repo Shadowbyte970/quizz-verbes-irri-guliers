@@ -2,27 +2,56 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz : Verbes Irréguliers</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
+      margin: 0;
+      padding: 0;
+      background-image: url('https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      max-width: 90%;
+      width: 400px;
+    }
+
     h1 {
       color: #2c3e50;
+      text-align: center;
     }
+
     label, input, select {
       display: block;
       margin: 10px 0;
+      width: 100%;
     }
+
     input[type="text"], select {
-      padding: 8px;
-      width: 300px;
+      padding: 10px;
+      font-size: 1rem;
     }
+
     button {
-      padding: 10px 20px;
+      padding: 10px;
+      width: 100%;
+      font-size: 1rem;
       margin-top: 10px;
+      cursor: pointer;
     }
+
     .correction {
       margin-top: 20px;
       padding: 10px;
@@ -33,30 +62,31 @@
 </head>
 <body>
 
-  <h1>Quiz : Verbes irréguliers</h1>
+  <div class="container">
+    <h1>Quiz : Verbes irréguliers</h1>
 
-  <label for="category">Choisir une catégorie :</label>
-  <select id="category" onchange="newQuestion()">
-    <option value="all">Tous les verbes</option>
-    <option value="3identiques">Trois formes identiques</option>
-    <option value="2identiques">Deux formes identiques</option>
-    <option value="different">Trois formes différentes</option>
-  </select>
+    <label for="category">Choisir une catégorie :</label>
+    <select id="category" onchange="newQuestion()">
+      <option value="all">Tous les verbes</option>
+      <option value="3identiques">Trois formes identiques</option>
+      <option value="2identiques">Deux formes identiques</option>
+      <option value="different">Trois formes différentes</option>
+    </select>
 
-  <p>Devine les formes du verbe : <strong id="baseVerb"></strong></p>
+    <p>Devine les formes du verbe : <strong id="baseVerb"></strong></p>
 
-  <label>Prétérit : <input type="text" id="preteritInput"></label>
-  <label>Participe passé : <input type="text" id="pastParticipleInput"></label>
-  <label>Traduction : <input type="text" id="translationInput"></label>
+    <label>Prétérit : <input type="text" id="preteritInput"></label>
+    <label>Participe passé : <input type="text" id="pastParticipleInput"></label>
+    <label>Traduction : <input type="text" id="translationInput"></label>
 
-  <button onclick="checkAnswers()">Vérifier</button>
-  <button onclick="newQuestion()">Nouveau verbe</button>
+    <button onclick="checkAnswers()">Vérifier</button>
+    <button onclick="newQuestion()">Nouveau verbe</button>
 
-  <div class="correction" id="correction" style="display: none;"></div>
+    <div class="correction" id="correction" style="display: none;"></div>
+  </div>
 
   <script>
     const verbs = [
-      // Format: { base: "", past: "", pastParticiple: "", translation: "", type: "3identiques" | "2identiques" | "different" }
       { base: "cut", past: "cut", pastParticiple: "cut", translation: "couper", type: "3identiques" },
       { base: "put", past: "put", pastParticiple: "put", translation: "mettre", type: "3identiques" },
       { base: "let", past: "let", pastParticiple: "let", translation: "laisser", type: "3identiques" },
@@ -76,8 +106,6 @@
       { base: "write", past: "wrote", pastParticiple: "written", translation: "écrire", type: "different" },
       { base: "take", past: "took", pastParticiple: "taken", translation: "prendre", type: "different" },
       { base: "speak", past: "spoke", pastParticiple: "spoken", translation: "parler", type: "different" },
-
-      // Ajoute ici les 147 verbes complets si tu veux plus tard
     ];
 
     let currentVerb;
@@ -113,6 +141,5 @@
 
     newQuestion();
   </script>
-
 </body>
 </html>
