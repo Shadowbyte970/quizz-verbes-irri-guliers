@@ -4,76 +4,84 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz Verbes Irréguliers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-image: url('https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg');
+      margin: 0;
+      font-family: 'Quicksand', sans-serif;
+      background: url('https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg') no-repeat center center fixed;
       background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      margin: 0;
     }
     .container {
       background-color: rgba(255, 255, 255, 0.95);
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
       width: 100%;
       max-width: 500px;
+      animation: fadeIn 0.5s ease-in-out;
     }
-    h1, h2 {
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    h1 {
       text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
     }
-    label, input, select {
+    label, input, select, button {
       display: block;
       width: 100%;
       margin-top: 10px;
+      font-size: 1rem;
     }
     input[type="text"], select {
-      padding: 10px;
-      font-size: 1rem;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
     }
     button {
-      padding: 10px;
-      margin-top: 10px;
-      width: 100%;
-      font-size: 1rem;
-      cursor: pointer;
+      padding: 12px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 10px;
+      background-color: #2980b9;
+      color: white;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background-color: #3498db;
     }
     .correction {
-      margin-top: 15px;
-      padding: 10px;
-      background-color: #f1f1f1;
-      border-left: 4px solid green;
+      margin-top: 20px;
+      padding: 12px;
+      background-color: #ecf0f1;
+      border-left: 5px solid #27ae60;
     }
     .score-display {
       text-align: center;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       font-weight: bold;
+      color: #27ae60;
       margin-bottom: 10px;
     }
-    #leaderboard {
-      display: none;
-      margin-top: 20px;
-    }
-    #leaderboard table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    #leaderboard th, #leaderboard td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: center;
+    @media (max-width: 600px) {
+      .container {
+        margin: 20px;
+        padding: 20px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Quiz : Verbes Irréguliers</h1>
+    <h1>🇬🇧 Quiz des Verbes Irréguliers 🇬🇧</h1>
     <div class="score-display">Score : <span id="score">0</span></div>
 
     <label for="pseudo">Ton pseudo :</label>
@@ -88,7 +96,7 @@
     </select>
 
     <label for="category">Choisir une catégorie :</label>
-    <select id="category" onchange="newQuestion()">
+    <select id="category" onchange="resetQuiz()">
       <option value="all">Tous les verbes</option>
       <option value="3identiques">Trois formes identiques</option>
       <option value="2identiques">Deux formes identiques</option>
@@ -101,27 +109,11 @@
     <label>Participe passé : <input type="text" id="pastParticipleInput"></label>
     <label>Traduction : <input type="text" id="translationInput"></label>
 
-    <button onclick="checkAnswers()">Vérifier</button>
-    <button onclick="newQuestion()">Nouveau verbe</button>
-    <button onclick="resetQuiz()">Réinitialiser</button>
-    <button onclick="toggleLeaderboard()">Classement mondial</button>
+    <button onclick="checkAnswers()">✅ Vérifier</button>
+    <button onclick="newQuestion()">➡️ Nouveau verbe</button>
+    <button onclick="resetQuiz()">🔁 Réinitialiser</button>
 
     <div class="correction" id="correction" style="display: none;"></div>
-
-    <div id="leaderboard">
-      <h2>Classement mondial</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Pseudo</th>
-            <th>Score</th>
-          </tr>
-        </thead>
-        <tbody id="leaderboard-body">
-          <!-- Scores seront affichés ici -->
-        </tbody>
-      </table>
-    </div>
   </div>
 
   <audio id="correctSound" src="https://www.soundjay.com/buttons/sounds/button-4.mp3"></audio>
@@ -129,11 +121,12 @@
 
   <script>
     const verbs = [
-      { base: "begin", past: "began", pastParticiple: "begun", translation: "commencer", type: "different" },
       { base: "bet", past: "bet", pastParticiple: "bet", translation: "parier", type: "3identiques" },
+      { base: "cut", past: "cut", pastParticiple: "cut", translation: "couper", type: "3identiques" },
       { base: "build", past: "built", pastParticiple: "built", translation: "construire", type: "2identiques" },
       { base: "bring", past: "brought", pastParticiple: "brought", translation: "apporter", type: "2identiques" },
-      { base: "cut", past: "cut", pastParticiple: "cut", translation: "couper", type: "3identiques" },
+      { base: "begin", past: "began", pastParticiple: "begun", translation: "commencer", type: "different" },
+      // Ajoute ici tous les autres verbes bien classés par type
     ];
 
     let score = 0;
@@ -161,7 +154,6 @@
       const preterit = document.getElementById("preteritInput").value.trim().toLowerCase();
       const pastParticiple = document.getElementById("pastParticipleInput").value.trim().toLowerCase();
       const translation = document.getElementById("translationInput").value.trim().toLowerCase();
-      const pseudo = document.getElementById("pseudo").value.trim();
 
       const correct = (
         preterit === currentVerb.past.toLowerCase() &&
@@ -185,36 +177,6 @@
         Traduction : ${currentVerb.translation}
       `;
       document.getElementById("correction").style.display = "block";
-
-      if (pseudo && score > 0) {
-        const scores = JSON.parse(localStorage.getItem("scores") || "[]");
-        const existing = scores.find(s => s.pseudo === pseudo);
-        if (!existing || score > existing.score) {
-          scores.push({ pseudo, score });
-          localStorage.setItem("scores", JSON.stringify(scores));
-        }
-      }
-    }
-
-    function toggleLeaderboard() {
-      const lb = document.getElementById("leaderboard");
-      if (lb.style.display === "none") {
-        showLeaderboard();
-        lb.style.display = "block";
-      } else {
-        lb.style.display = "none";
-      }
-    }
-
-    function showLeaderboard() {
-      const scores = JSON.parse(localStorage.getItem("scores") || "[]");
-      const sorted = scores.sort((a, b) => b.score - a.score).slice(0, 10);
-      const tbody = document.getElementById("leaderboard-body");
-      tbody.innerHTML = "";
-      for (const entry of sorted) {
-        const row = `<tr><td>${entry.pseudo}</td><td>${entry.score}</td></tr>`;
-        tbody.innerHTML += row;
-      }
     }
 
     function resetQuiz() {
@@ -228,12 +190,4 @@
   </script>
 </body>
 </html>
-const firebaseConfig = {
-  apiKey: "AIzAxxxxxxxxxxxxxx",
-  authDomain: "quiz-verbes.firebaseapp.com",
-  projectId: "quiz-verbes",
-  storageBucket: "quiz-verbes.appspot.com",
-  messagingSenderId: "1234567890",
-  appId: "1:1234567890:web:abcdefg"
-};
 
